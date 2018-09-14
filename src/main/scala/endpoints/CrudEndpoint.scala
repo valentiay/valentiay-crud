@@ -1,25 +1,18 @@
 package endpoints
 
-import java.util.UUID
-
+import cats.Functor
+import cats.syntax.functor._
 import io.finch._
 import io.finch.syntax._
-import io.finch.syntax.scalaFutures._
-import process.{Context, Contextual}
 import services.CrudService
-import monix.execution.Scheduler.Implicits.global
 
-import scala.concurrent.Future
-
-class CrudEndpoint(crudService: CrudService[Contextual]) {
-  def provideContext[T](c: Contextual[T]): Future[Output[T]] = c.run(Context(UUID.randomUUID, System.currentTimeMillis)).map(x => Ok(x)).runAsync
-
-  val double = get(path("double") :: path[Int]) {
-    x: Int => provideContext(crudService.double(x))
+class CrudEndpoint[F[_]: ToTwitterFuture: Functor](crudService: CrudService[F]) {
+  val double: Endpoint[Int] = get(path("double") :: path[Int]) {
+    x: Int => crudService.double(x).map(Ok)
   }
 
-  val upper = get(path("upper") :: path[String]) {
-    x: String => provideContext(crudService.upper(x))
+  val upper: Endpoint[String] = get(path("upper") :: path[String]) {
+    x: String => crudService.upper(x).map(Ok)
   }
 
   val endpoint = double :+: upper
