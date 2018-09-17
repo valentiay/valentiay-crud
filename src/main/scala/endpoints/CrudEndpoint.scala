@@ -9,8 +9,10 @@ import response._
 
 class CrudEndpoint(crudService: CrudService[Contextual])(implicit scheduler: Scheduler) {
 
-  val double: CtxEndpoint[Int] = get(path("double") :: path[Int]) {
-    x: Int => crudService.double(x)
+  val double: CtxEndpoint[Double] = get(path("opposite") :: path[String]) {
+    x: String =>
+      println(x.toDouble)
+      crudService.opposite(x.toDouble)
   }
 
   val upper: CtxEndpoint[String] = get(path("upper") :: path[String]) {
