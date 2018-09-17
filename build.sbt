@@ -15,3 +15,6 @@ lazy val dependencies = Seq(
 
 lazy val root = project in file(".") dependsOn core aggregate core
 lazy val core = project in file("core") settings (libraryDependencies ++= dependencies)
+
+resolvers += Resolver.sonatypeRepo("releases")
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

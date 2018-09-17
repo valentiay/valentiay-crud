@@ -1,5 +1,3 @@
-import java.util.UUID
-
 import com.twitter.util.Future
 import io.finch
 import io.finch.{Endpoint, Ok}
@@ -12,14 +10,6 @@ import cats.syntax.applicativeError._
 
 package object response {
   type CtxEndpoint[T] = Endpoint[Response[T]]
-
-  case class Response[T](status: Status, time: Long, trace: UUID, load: Either[String, T])
-
-  sealed trait Status
-  object Status {
-    case object Ok extends Status
-    case object Error extends Status
-  }
 
   implicit def provideContext: () => Context = () => Context.mkContext
 
