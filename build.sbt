@@ -8,7 +8,9 @@ lazy val dependencies = Seq(
   "com.github.finagle" %% "finch-core" % "0.22.0",
   "com.github.finagle" %% "finch-circe" % "0.22.0",
   "io.monix" %% "monix" % "3.0.0-RC1",
+  "com.propensive" %% "magnolia" % "0.7.1",
   "io.circe" %% "circe-generic" % "0.9.3",
+  "com.typesafe" % "config" % "1.3.2",
 )
 
 lazy val root = project in file(".") dependsOn core aggregate core
