@@ -1,7 +1,6 @@
 package process
 
-import cats.{Monad, MonadError}
-import errors.FError
+import cats.MonadError
 import monix.eval.Task
 import cats.syntax.applicativeError._
 
@@ -12,7 +11,7 @@ final case class Contextual[A](f: Context => Task[A]) {
 object Contextual {
   def ctx = Contextual(ctx => Task.pure(ctx))
 
-  implicit object ContextualMonad extends MonadError[Contextual, Throwable] {
+  implicit object ContextualMonadError extends MonadError[Contextual, Throwable] {
     def pure[A](a: A): Contextual[A] = Contextual(_ => Task.pure(a))
 
     def flatMap[A, B](fa: Contextual[A])(f: A => Contextual[B]): Contextual[B] = Contextual(ctx => fa.run(ctx).flatMap(a => f(a).run(ctx)))

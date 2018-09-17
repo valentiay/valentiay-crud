@@ -1,5 +1,3 @@
-import java.util.UUID
-
 import com.twitter.util.Future
 import io.finch
 import io.finch.{Endpoint, Ok}
@@ -9,17 +7,10 @@ import process.{Context, Contextual}
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import cats.syntax.applicativeError._
+import errors.AppError
 
 package object response {
   type CtxEndpoint[T] = Endpoint[Response[T]]
-
-  case class Response[T](status: Status, time: Long, trace: UUID, load: Either[String, T])
-
-  sealed trait Status
-  object Status {
-    case object Ok extends Status
-    case object Error extends Status
-  }
 
   implicit def provideContext: () => Context = () => Context.mkContext
 
@@ -28,8 +19,10 @@ package object response {
       def apply[A](c: Contextual[A]): Future[A] = finch.syntax.scalaFutures.scalaToTwitterFuture(c.run(ctx()).runAsync)
   }
 
-  def mkErrorResponse[B](ctx: Context)(e: Throwable): Response[B] =
-    Response[B](Status.Error, ctx.time, ctx.trace, Left(e.toString))
+  def mkErrorResponse[B](ctx: Context)(e: Throwable): Response[B] = e match {
+    case err: AppError => Response[B](Status.Error, ctx.time, ctx.trace, Left(err.getMessage))
+    case thr: Throwable => Response[B](Status.Error, ctx.time, ctx.trace, Left(s"Unexpected error: ${thr.toString}"))
+  }
   def mkOkResponse[B](ctx: Context)(result: B): Response[B] =
     Response[B](Status.Ok, ctx.time, ctx.trace, Right(result))
 
