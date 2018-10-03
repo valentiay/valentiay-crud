@@ -11,6 +11,8 @@ lazy val dependencies = Seq(
   "com.propensive" %% "magnolia" % "0.7.1",
   "io.circe" %% "circe-generic" % "0.9.3",
   "com.typesafe" % "config" % "1.3.2",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
 )
 
 lazy val root = project in file(".") dependsOn core aggregate core
